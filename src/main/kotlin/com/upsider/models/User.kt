@@ -1,5 +1,7 @@
 package com.upsider.models
 
+import kotlinx.serialization.Serializable
+
 data class User(
     val id: Int,
     val companyName: String,
@@ -10,6 +12,31 @@ data class User(
     val updatedAt: Long
 )
 
-data class UserRequest(val companyName: String, val name: String, val email: String, val password: String)
+@Serializable
+data class UserResponse(
+    val id: Int,
+    val companyName: String,
+    val name: String,
+    val email: String,
+)
 
-data class LoginRequest(val email: String, val password: String)
+data class UserRequest(
+    val companyName: String,
+    val name: String,
+    val email: String,
+    val password: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)
+
+fun User.toResponse(): UserResponse {
+    return UserResponse(
+        id,
+        companyName,
+        name,
+        email
+    )
+}

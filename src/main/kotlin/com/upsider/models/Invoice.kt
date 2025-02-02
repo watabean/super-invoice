@@ -1,5 +1,6 @@
 package com.upsider.models
 
+import kotlinx.serialization.Serializable
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -24,3 +25,18 @@ data class InvoiceRequest(
     val paymentAmount: BigDecimal,
     val paymentDueDate: LocalDate
 )
+
+@Serializable
+data class InvoiceResponse(
+    val companyName: String,
+    val issueDate: String,
+    val paymentAmount: Long
+)
+
+fun Invoice.toResponse(): InvoiceResponse {
+    return InvoiceResponse(
+        "Your Company Name",
+        issueDate.toString(),
+        paymentAmount.toLong()
+    )
+}

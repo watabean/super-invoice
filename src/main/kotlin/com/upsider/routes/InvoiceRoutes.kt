@@ -5,13 +5,9 @@ import com.upsider.services.InvoiceService
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import org.koin.ktor.ext.inject
 import java.time.LocalDate
 
-fun Route.invoiceRoutes() {
-    val invoiceService by inject<InvoiceService>()
-
-
+fun Route.invoiceRoutes(invoiceService: InvoiceService) {
     route("/invoices") {
         post {
             val request = call.receive<InvoiceRequest>()

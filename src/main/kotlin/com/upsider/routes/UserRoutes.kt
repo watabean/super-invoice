@@ -8,9 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
 
-fun Route.userRoutes() {
-    val userService by inject<UserService>()
-
+fun Route.userRoutes(userService: UserService) {
     route("/users") {
         post("/register") {
             val request = call.receive<UserRequest>()

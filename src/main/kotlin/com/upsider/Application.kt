@@ -1,5 +1,6 @@
 package com.upsider
 
+import com.upsider.routes.configureRouting
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {

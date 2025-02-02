@@ -1,5 +1,6 @@
 package com.upsider.routes
 
+import com.upsider.models.Invoice
 import com.upsider.models.InvoiceRequest
 import com.upsider.services.InvoiceService
 import io.ktor.http.*

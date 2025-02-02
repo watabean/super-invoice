@@ -12,4 +12,4 @@ data class User(
 
 data class UserRequest(val companyName: String, val name: String, val email: String, val password: String)
 
-data class LoginRequest()
+data class LoginRequest(val email: String, val password: String)

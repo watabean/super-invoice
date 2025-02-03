@@ -62,9 +62,9 @@ fun main() = runBlocking {
             header("Authorization", "Bearer $token")
             setBody(
                 mapOf(
-                    "issueDate" to date,
+                    "issueDate" to "2025-01-31",
                     "paymentAmount" to amount,
-                    "paymentDueDate" to "2025-02-28"
+                    "paymentDueDate" to date
                 )
             )
             contentType(ContentType.Application.Json)
@@ -85,12 +85,12 @@ fun main() = runBlocking {
             header("Authorization", "Bearer $token")
             contentType(ContentType.Application.Json)
         }
-        println("Invoices ($start - $end): ${response.status} ${response.body<InvoiceListResponse>()}")
+        println("Invoices ($start - $end): ${response.status} ${response.body<InvoiceListResponse>().invoices.size}")
     }
 
     println("Fetching all invoices (no date filter)...")
     val response = client.get("$baseUrl/invoices") {
         header("Authorization", "Bearer $token")
     }
-    println("All Invoices: ${response.status} ${response.bodyAsText()}")
+    println("All Invoices: ${response.status} ${response.body<InvoiceListResponse>().invoices.size}")
 }

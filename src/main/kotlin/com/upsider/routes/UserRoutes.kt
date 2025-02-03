@@ -1,6 +1,5 @@
 package com.upsider.routes
 
-import com.upsider.models.toResponse
 import com.upsider.services.UserService
 import com.upsider.utils.parseLoginRequest
 import com.upsider.utils.parseUserRequest
@@ -8,19 +7,23 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.slf4j.LoggerFactory
 
 fun Route.userRoutes(userService: UserService) {
+    val logger = LoggerFactory.getLogger(this::class.java.name)
+
     route("/users") {
-        post("/register") {
+        post {
             try {
                 val json = call.receive<String>()
                 val request = parseUserRequest(json)
-                val user = userService.createUser(request)
-                call.respond(HttpStatusCode.Created, user.toResponse())
+                userService.createUser(request)
+                call.respond(HttpStatusCode.Created)
             } catch (e: IllegalArgumentException) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid registration request"))
+                logger.error("Unexpected error during user registration", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Internal server error"))
             }
         }
 
@@ -37,7 +40,8 @@ fun Route.userRoutes(userService: UserService) {
             } catch (e: IllegalArgumentException) {
                 call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid login request"))
+                logger.error("Unexpected error during user login", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Internal server error"))
             }
         }
     }

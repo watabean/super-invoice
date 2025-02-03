@@ -13,23 +13,22 @@ import org.slf4j.LoggerFactory
 fun Route.userRoutes(userService: UserService) {
     val logger = LoggerFactory.getLogger(this::class.java.name)
 
-    authenticate("auth-jwt") {
-        route("/users") {
-            post {
-                try {
-                    val json = call.receive<String>()
-                    val request = parseUserRequest(json)
-                    userService.createUser(request)
-                    call.respond(HttpStatusCode.Created)
-                } catch (e: IllegalArgumentException) {
-                    call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
-                } catch (e: Exception) {
-                    logger.error("Unexpected error during user registration", e)
-                    call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Internal server error"))
-                }
+    route("/users") {
+        post {
+            try {
+                val json = call.receive<String>()
+                val request = parseUserRequest(json)
+                userService.createUser(request)
+                call.respond(HttpStatusCode.Created)
+            } catch (e: IllegalArgumentException) {
+                call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
+            } catch (e: Exception) {
+                logger.error("Unexpected error during user registration", e)
+                call.respond(HttpStatusCode.InternalServerError, mapOf("error" to "Internal server error"))
             }
         }
     }
+
 
     post("/login") {
         try {

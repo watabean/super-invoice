@@ -18,9 +18,9 @@ class InvoiceService(
         private val TAX_RATE = BigDecimal("0.10")
     }
 
-    fun createInvoice(request: InvoiceRequest) {
+    fun createInvoice(request: InvoiceRequest, userId: Int) {
         // ユーザの存在チェック
-        userRepository.findById(request.userId) ?: throw IllegalArgumentException("This user ID not found")
+        userRepository.findById(userId) ?: throw IllegalArgumentException("This user ID not found")
 
         // 手数料
         val fee = calculateFee(request.paymentAmount, FEE_RATE)
@@ -30,7 +30,7 @@ class InvoiceService(
         val totalAmount = request.paymentAmount.add(fee).add(taxAmount)
 
         val invoice = InvoiceForInsert(
-            userId = request.userId,
+            userId = userId,
             issueDate = request.issueDate,
             paymentAmount = request.paymentAmount,
             fee = fee,
@@ -43,8 +43,8 @@ class InvoiceService(
         invoiceRepository.save(invoice)
     }
 
-    fun getInvoices(startDate: LocalDate?, endDate: LocalDate?): List<InvoiceWithUserInfo> {
-        return invoiceRepository.findInvoicesBetween(startDate, endDate)
+    fun getInvoices(userId: Int, startDate: LocalDate?, endDate: LocalDate?): List<InvoiceWithUserInfo> {
+        return invoiceRepository.findInvoicesBetween(userId, startDate, endDate)
     }
 
     private fun calculateFee(baseAmount: BigDecimal, feeRate: BigDecimal): BigDecimal {

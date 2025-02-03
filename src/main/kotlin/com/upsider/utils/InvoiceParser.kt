@@ -11,9 +11,6 @@ import java.time.format.DateTimeParseException
 fun parseInvoiceRequest(json: String): InvoiceRequest {
     val jsonObject = Json.parseToJsonElement(json).jsonObject
 
-    val userId = jsonObject["userId"]?.jsonPrimitive?.content?.toIntOrNull()
-        ?: throw IllegalArgumentException("userId is required and must be an integer.")
-
     val issueDate = jsonObject["issueDate"]?.jsonPrimitive?.content?.let {
         try {
             LocalDate.parse(it)
@@ -42,5 +39,5 @@ fun parseInvoiceRequest(json: String): InvoiceRequest {
         throw IllegalArgumentException("issueDate must be before or equal to paymentDueDate.")
     }
 
-    return InvoiceRequest(userId, issueDate, paymentAmount, paymentDueDate)
+    return InvoiceRequest(issueDate, paymentAmount, paymentDueDate)
 }

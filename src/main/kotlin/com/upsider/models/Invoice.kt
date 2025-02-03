@@ -17,7 +17,6 @@ data class InvoiceForInsert(
 )
 
 data class InvoiceRequest(
-    val userId: Int,
     val issueDate: LocalDate,
     val paymentAmount: BigDecimal,
     val paymentDueDate: LocalDate

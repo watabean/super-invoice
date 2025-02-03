@@ -29,7 +29,7 @@ class InvoiceRepository {
         }
     }
 
-    fun findInvoicesBetween(startDate: LocalDate?, endDate: LocalDate?): List<InvoiceWithUserInfo> {
+    fun findInvoicesBetween(userId: Int, startDate: LocalDate?, endDate: LocalDate?): List<InvoiceWithUserInfo> {
         return transaction {
             (InvoicesTable innerJoin UsersTable)
                 .selectAll()

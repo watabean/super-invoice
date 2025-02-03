@@ -5,6 +5,7 @@ import com.upsider.services.InvoiceService
 import com.upsider.utils.parseInvoiceRequest
 import io.ktor.http.*
 import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -19,9 +20,14 @@ fun Route.invoiceRoutes(invoiceService: InvoiceService) {
         route("/invoices") {
             post {
                 try {
+                    val userId = call.principal<JWTPrincipal>()?.getClaim("userId", Int::class)
+                    if (userId == null) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                        return@post
+                    }
                     val json = call.receive<String>()
                     val request = parseInvoiceRequest(json)
-                    invoiceService.createInvoice(request)
+                    invoiceService.createInvoice(request, userId)
                     call.respond(HttpStatusCode.Created)
                 } catch (e: IllegalArgumentException) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to e.message))
@@ -33,6 +39,12 @@ fun Route.invoiceRoutes(invoiceService: InvoiceService) {
 
             get {
                 try {
+                    val userId = call.principal<JWTPrincipal>()?.getClaim("userId", Int::class)
+                    if (userId == null) {
+                        call.respond(HttpStatusCode.Unauthorized)
+                        return@get
+                    }
+
                     val startDate = call.request.queryParameters["start_date"]?.let { LocalDate.parse(it) }
                     val endDate = call.request.queryParameters["end_date"]?.let { LocalDate.parse(it) }
 
@@ -41,7 +53,7 @@ fun Route.invoiceRoutes(invoiceService: InvoiceService) {
                         return@get
                     }
 
-                    val invoices = invoiceService.getInvoices(startDate, endDate)
+                    val invoices = invoiceService.getInvoices(userId, startDate, endDate)
                     call.respond(HttpStatusCode.OK, invoices.toResponseList())
                 } catch (e: DateTimeParseException) {
                     call.respond(HttpStatusCode.BadRequest, mapOf("error" to "Invalid date format"))

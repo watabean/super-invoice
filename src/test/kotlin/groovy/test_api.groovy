@@ -1,3 +1,5 @@
+package groovy
+
 @Grab('io.github.http-builder-ng:http-builder-ng-core:1.0.4')
 
 import groovyx.net.http.HttpBuilder

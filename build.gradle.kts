@@ -45,10 +45,8 @@ dependencies {
     testImplementation("io.github.http-builder-ng:http-builder-ng-core:1.0.4")
 }
 
-tasks.register<JavaExec>("testApi") {
+tasks.register<Exec>("testApi") {
     group = "verification"
     description = "Runs API test using Groovy script"
-    mainClass.set("-jar")
-    args = listOf("src/test/groovy/test_api.groovy")
-    classpath = sourceSets["test"].runtimeClasspath
+    commandLine("groovy", "src/test/groovy/test_api.groovy")
 }

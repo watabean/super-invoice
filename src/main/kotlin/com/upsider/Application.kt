@@ -20,6 +20,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    Config.load(environment)
+
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
@@ -28,10 +30,12 @@ fun Application.module() {
     }
     install(Authentication) {
         jwt("auth-jwt") {
+            val jwtConfig = Config.jwt()
+
             verifier(
-                JWT.require(Algorithm.HMAC256("test")) // TODO 管理方法
-                    .withIssuer("UPSIDER")
-                    .withAudience("super-invoice-api")
+                JWT.require(Algorithm.HMAC256(jwtConfig.secret)) // TODO 管理方法
+                    .withIssuer(jwtConfig.issuer)
+                    .withAudience(jwtConfig.audience)
                     .build()
             )
             validate { credential ->

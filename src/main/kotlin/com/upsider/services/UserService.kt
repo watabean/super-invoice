@@ -25,17 +25,15 @@ class UserService(private val userRepository: UserRepository) {
 
 
     private fun generateJwtToken(userId: Int): String {
-        val secret = "test"
-        val issuer = "UPSIDER"
-        val audience = "super-invoice-api"
-        val expirationTime = Date.from(Instant.now().plus(1, ChronoUnit.HOURS))
+        val jwtConfig = Config.jwt()
+        val expirationTime = Date(System.currentTimeMillis() + jwtConfig.expiration)
 
         return JWT.create()
-            .withIssuer(issuer)
-            .withAudience(audience)
+            .withIssuer(jwtConfig.issuer)
+            .withAudience(jwtConfig.audience)
             .withSubject(userId.toString())
             .withClaim("userId", userId)
             .withExpiresAt(expirationTime)
-            .sign(Algorithm.HMAC256(secret))
+            .sign(Algorithm.HMAC256(jwtConfig.secret))
     }
 }

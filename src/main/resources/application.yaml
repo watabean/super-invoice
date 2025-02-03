@@ -1,11 +1,17 @@
 ktor:
-    application:
-        modules:
-            - com.upsider.ApplicationKt.module
-    deployment:
-        port: 8080
-    database:
-        url: "jdbc:postgresql://localhost:5432/super_shiharai_kun"
-        driver: "org.postgresql.Driver"
-        user: "myuser"
-        password: "mypassword"
+  application:
+    modules:
+      - com.upsider.ApplicationKt.module
+  deployment:
+    port: 8080
+  database:
+    url: "jdbc:postgresql://localhost:5432/super_shiharai_kun"
+    driver: "org.postgresql.Driver"
+    user: "myuser"
+    password: "mypassword"
+
+jwt:
+  secret: "your-secure-secret" # TODO
+  issuer: "UPSIDER"
+  audience: "super-invoice-api"
+  expiration: 3600

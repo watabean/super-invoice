@@ -33,7 +33,7 @@ fun Application.module() {
             val jwtConfig = Config.jwt()
 
             verifier(
-                JWT.require(Algorithm.HMAC256(jwtConfig.secret)) // TODO 管理方法
+                JWT.require(Algorithm.HMAC256(jwtConfig.secret))
                     .withIssuer(jwtConfig.issuer)
                     .withAudience(jwtConfig.audience)
                     .build()

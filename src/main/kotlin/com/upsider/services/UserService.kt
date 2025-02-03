@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.upsider.models.User
 import com.upsider.models.UserRequest
 import com.upsider.repositories.UserRepository
+import org.mindrot.jbcrypt.BCrypt
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.*
@@ -20,7 +21,7 @@ class UserService(private val userRepository: UserRepository) {
 
     fun authenticate(email: String, password: String): String? {
         val user = userRepository.findByEmail(email)
-        return if (user != null && user.password == password) generateJwtToken(user.id) else null
+        return if (user != null && BCrypt.checkpw(password, user.password)) generateJwtToken(user.id) else null
     }
 
 

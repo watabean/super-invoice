@@ -6,6 +6,7 @@ import com.upsider.tables.UsersTable
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.mindrot.jbcrypt.BCrypt
 
 class UserRepository {
 
@@ -15,7 +16,7 @@ class UserRepository {
                 it[companyName] = request.companyName
                 it[name] = request.name
                 it[email] = request.email
-                it[password] = request.password // 実運用では暗号化を推奨
+                it[password] = BCrypt.hashpw(request.password, BCrypt.gensalt())
             } get UsersTable.id
 
             UsersTable.selectAll().where { UsersTable.id eq id }

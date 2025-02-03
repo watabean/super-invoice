@@ -4,10 +4,7 @@ import com.upsider.models.InvoiceForInsert
 import com.upsider.models.InvoiceWithUserInfo
 import com.upsider.tables.InvoicesTable
 import com.upsider.tables.UsersTable
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 
@@ -34,8 +31,14 @@ class InvoiceRepository {
             (InvoicesTable innerJoin UsersTable)
                 .selectAll()
                 .where {
-                    (startDate?.let { InvoicesTable.paymentDueDate greaterEq it } ?: Op.TRUE) and
-                            (endDate?.let { InvoicesTable.paymentDueDate lessEq it } ?: Op.TRUE)
+                    var condition: Op<Boolean> = (InvoicesTable.userId eq userId)
+                    if (startDate != null) {
+                        condition = condition and (InvoicesTable.paymentDueDate greaterEq startDate)
+                    }
+                    if (endDate != null) {
+                        condition = condition and (InvoicesTable.paymentDueDate lessEq endDate)
+                    }
+                    condition
                 }
                 .map {
                     InvoiceWithUserInfo(

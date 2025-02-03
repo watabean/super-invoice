@@ -9,6 +9,7 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.sql.Database
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -21,9 +22,21 @@ fun Application.module() {
             isLenient = true
         })
     }
+    connectToDatabase()
     val invoiceRepository = InvoiceRepository()
-    val invoiceService = InvoiceService(invoiceRepository)
     val userRepository = UserRepository()
+    val invoiceService = InvoiceService(invoiceRepository, userRepository)
     val userService = UserService(userRepository)
     configureRouting(userService, invoiceService)
+}
+
+fun Application.connectToDatabase() {
+    val dbConfig = environment.config.config("ktor.database")
+
+    Database.connect(
+        url = dbConfig.property("url").getString(),
+        driver = dbConfig.property("driver").getString(),
+        user = dbConfig.property("user").getString(),
+        password = dbConfig.property("password").getString()
+    )
 }

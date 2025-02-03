@@ -31,12 +31,3 @@ data class LoginRequest(
     val email: String,
     val password: String
 )
-
-fun User.toResponse(): UserResponse {
-    return UserResponse(
-        id,
-        companyName,
-        name,
-        email
-    )
-}
